@@ -1,20 +1,30 @@
 package net.eratiem.uptimekumapush
 
+import org.yaml.snakeyaml.Yaml
+import java.io.File
+import java.io.FileInputStream
 import java.net.URI
 
-class ConfigManager(plugin: UptimeKumaPushPlugin) {
+class ConfigManager(dataFolder: File) {
     companion object {
-        lateinit var INSTANCE: ConfigManager
+        lateinit var config: Config
     }
-
-    var pushUrl: URI
 
     init {
-        INSTANCE = this
+        val configFile = File(dataFolder, "config.yml")
 
-        plugin.saveDefaultConfig()
+        // create config file if not exists
+        if (!configFile.exists()) {
+            configFile.createNewFile()
+            ConfigManager::class.java.getResource("/config.yml")?.let { configFile.writeText(it.readText()) }
+        }
 
-        val config = plugin.config
-        pushUrl = config.getString("KumaPushUrl")?.let { URI(it) }!!
+        val configMap: Map<String, String> = Yaml().load(FileInputStream(configFile))
+
+        config = Config(
+            pushUrl = URI(configMap["pushUrl"]!!)
+        )
     }
+
+    data class Config(val pushUrl: URI)
 }

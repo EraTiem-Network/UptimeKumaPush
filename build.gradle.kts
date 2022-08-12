@@ -12,7 +12,7 @@ plugins {
 }
 
 group = "net.eratiem"
-version = "1.0.0"
+version = "1.1.0"
 
 repositories {
     maven {
@@ -25,9 +25,12 @@ repositories {
 dependencies {
     val kotlinVersion: String by System.getProperties()
     val paperApiVersion: String by project
+    val velocityApiVersion: String by project
 
     compileOnly(kotlin("stdlib", kotlinVersion))
     compileOnly("io.papermc.paper", "paper-api", paperApiVersion)
+    compileOnly("com.velocitypowered", "velocity-api", velocityApiVersion)
+    annotationProcessor("com.velocitypowered", "velocity-api", velocityApiVersion)
 }
 
 publishing {
