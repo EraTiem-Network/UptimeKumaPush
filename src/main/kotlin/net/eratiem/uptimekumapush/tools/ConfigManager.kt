@@ -1,4 +1,4 @@
-package net.eratiem.uptimekumapush
+package net.eratiem.uptimekumapush.tools
 
 import org.yaml.snakeyaml.Yaml
 import java.io.File

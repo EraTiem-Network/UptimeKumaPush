@@ -1,9 +1,11 @@
-package net.eratiem.uptimekumapush
+package net.eratiem.uptimekumapush.paper
 
+import net.eratiem.uptimekumapush.tools.ConfigManager
+import net.eratiem.uptimekumapush.tools.Tools
 import org.bukkit.plugin.java.JavaPlugin
 import org.bukkit.scheduler.BukkitTask
 
-class UptimeKumaPushSpigot : JavaPlugin() {
+class UptimeKumaPushPlugin : JavaPlugin() {
     private lateinit var task: BukkitTask
 
     override fun onEnable() {

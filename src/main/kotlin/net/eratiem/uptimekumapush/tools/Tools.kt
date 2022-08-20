@@ -1,4 +1,4 @@
-package net.eratiem.uptimekumapush
+package net.eratiem.uptimekumapush.tools
 
 import java.net.http.HttpClient
 import java.net.http.HttpRequest
