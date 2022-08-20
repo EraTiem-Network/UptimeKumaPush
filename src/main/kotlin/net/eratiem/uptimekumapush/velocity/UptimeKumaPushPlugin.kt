@@ -17,7 +17,7 @@ import javax.inject.Inject
     id = "uptimekumapush", name = "UptimeKumaPush", version = "1.0.0",
     description = "A Plugin to Push Uptime-Data to Kuma", authors = ["Motzkiste"]
 )
-class UptimeKumaPushVelocity @Inject constructor(
+class UptimeKumaPushPlugin @Inject constructor(
     server: ProxyServer,
     private val logger: Logger,
     @DataDirectory dataDirectory: Path
