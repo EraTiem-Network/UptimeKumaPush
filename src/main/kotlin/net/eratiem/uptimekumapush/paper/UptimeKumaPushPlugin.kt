@@ -12,7 +12,7 @@ class UptimeKumaPushPlugin : JavaPlugin() {
         try {
             ConfigManager(this.dataFolder)
         } catch (e: Exception) {
-            logger.warning("Failed to load config! Please check your config.yml " + e.message)
+            logger.warning("Failed to load config! Please check your config.yml\n${e.stackTraceToString()}")
             server.pluginManager.disablePlugin(this)
             return
         }
