@@ -15,7 +15,7 @@ class ConfigManager(dataFolder: File) {
 
         // create config file if not exists
         if (!configFile.exists()) {
-            configFile.createNewFile()
+            dataFolder.mkdirs()
             ConfigManager::class.java.getResource("/config.yml")?.let { configFile.writeText(it.readText()) }
         }
 

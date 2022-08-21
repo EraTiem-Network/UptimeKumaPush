@@ -1,6 +1,7 @@
 package net.eratiem.uptimekumapush.velocity
 
 import com.velocitypowered.api.event.Subscribe
+import com.velocitypowered.api.event.proxy.ProxyInitializeEvent
 import com.velocitypowered.api.event.proxy.ProxyShutdownEvent
 import com.velocitypowered.api.plugin.Dependency
 import com.velocitypowered.api.plugin.Plugin
@@ -17,29 +18,34 @@ import javax.inject.Inject
 @Plugin(
     id = "uptimekumapush", name = "UptimeKumaPush", version = "1.0.0",
     description = "A Plugin to Push Uptime-Data to Kuma", authors = ["Motzkiste"],
-    dependencies = [Dependency(id = "KotlinProvider")]
+    dependencies = [Dependency(id = "kotlinprovider")]
 )
 class UptimeKumaPushPlugin @Inject constructor(
-    server: ProxyServer,
+    private val server: ProxyServer,
     private val logger: Logger,
-    @DataDirectory dataDirectory: Path
+    @DataDirectory private val dataDirectory: Path
 ) {
-    private val task: ScheduledTask
+    private var task: ScheduledTask? = null
 
-    init {
-        ConfigManager(dataDirectory.toFile())
+    @Subscribe
+    fun onProxyInitializeEvent(event: ProxyInitializeEvent) {
+        try {
+            ConfigManager(dataDirectory.toFile())
 
-        task = server.scheduler
-            .buildTask(this, Tools.pushToKuma(logger))
-            .repeat(1L, TimeUnit.MINUTES)
-            .schedule()
+            task = server.scheduler
+                .buildTask(this, Tools.pushToKuma(logger))
+                .repeat(1L, TimeUnit.MINUTES)
+                .schedule()
 
-        logger.info("UptimeKumaPushVelocity is enabled")
+            logger.info("UptimeKumaPushVelocity is enabled")
+        } catch (e: Exception) {
+            logger.warning("Failed to load config! Please check your config.yml | ${e.message}\n${e.stackTraceToString()}")
+        }
     }
 
     @Subscribe
     fun onProxyShutdownEvent(event: ProxyShutdownEvent) {
-        task.cancel()
+        task?.cancel()
 
         logger.info("UptimeKumaPushVelocity is disabled")
     }
