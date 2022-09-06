@@ -53,8 +53,6 @@ tasks {
         outputs.upToDateWhen { false }
 
         val mainClass = "${project.group}.${project.name.toLowerCase()}.${project.properties["mainClass"]}"
-        val apiVersion =
-            "(\\d+\\.\\d+){1}(\\.\\d+)?".toRegex().find(project.properties["paperApiVersion"] as String)!!.value
         val pluginDescription: String by project
         val pluginDependencies = getAsYamlList(project.properties["pluginDependencies"])
         val pluginSoftDependencies = getAsYamlList(project.properties["pluginSoftdependencies"])
@@ -65,13 +63,31 @@ tasks {
             "plugin_description" to pluginDescription,
             "plugin_version" to version.toString(),
             "plugin_main_class" to mainClass,
-            "plugin_api_version" to apiVersion,
             "plugin_dependencies" to pluginDependencies,
             "plugin_softdependencies" to pluginSoftDependencies,
             "plugin_authors" to authors
         )
 
-        filesMatching(setOf("plugin.yml", "bungee.yml")) {
+
+        val apiRegex: Regex = "(\\d+\\.\\d+){1}(\\.\\d+)?".toRegex()
+        filesMatching("plugin.yml") {
+            var apiVersion =
+                (project.properties["paperApiVersion"]?.takeUnless { (it as String).isBlank() }
+                    ?: project.properties["spigotApiVersion"]?.takeUnless { (it as String).isBlank() }
+                    ?: "none") as String
+            if (apiRegex.containsMatchIn(apiVersion)) apiVersion = apiRegex.find(apiVersion)?.value ?: "none"
+
+            props["plugin_api_version"] = apiVersion
+
+            expand(props)
+        }
+        filesMatching("bungee.yml") {
+            var apiVersion =
+                (project.properties["bungeeApiVersion"]?.takeUnless { (it as String).isBlank() } ?: "none") as String
+            if (apiRegex.containsMatchIn(apiVersion)) apiVersion = apiRegex.find(apiVersion)?.value ?: "none"
+
+            props["plugin_api_version"] = apiVersion
+
             expand(props)
         }
     }
