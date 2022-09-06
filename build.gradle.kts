@@ -15,7 +15,7 @@ plugins {
 }
 
 group = "net.eratiem"
-version = "1.1.0"
+version = "1.2.0"
 
 repositories {
     maven {
@@ -27,12 +27,14 @@ repositories {
 
 dependencies {
     val kotlinVersion: String by System.getProperties()
+    val eraloggerVersion: String by project
     val spigotApiVersion: String? by project
     val paperApiVersion: String? by project
     val bungeeApiVersion: String? by project
     val velocityApiVersion: String? by project
 
     compileOnly(kotlin("stdlib", kotlinVersion))
+    compileOnly("net.eratiem", "eralogger", eraloggerVersion)
 
     if (!spigotApiVersion.isNullOrBlank()) compileOnly("org.spigotmc", "spigot-api", spigotApiVersion)
     if (!paperApiVersion.isNullOrBlank()) compileOnly("io.papermc.paper", "paper-api", paperApiVersion)

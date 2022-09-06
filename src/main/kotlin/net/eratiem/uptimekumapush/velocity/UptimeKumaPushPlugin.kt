@@ -8,24 +8,26 @@ import com.velocitypowered.api.plugin.Plugin
 import com.velocitypowered.api.plugin.annotation.DataDirectory
 import com.velocitypowered.api.proxy.ProxyServer
 import com.velocitypowered.api.scheduler.ScheduledTask
+import net.eratiem.eralogger.tools.EraLogger
 import net.eratiem.uptimekumapush.tools.ConfigManager
 import net.eratiem.uptimekumapush.tools.Tools
+import org.slf4j.Logger
 import java.nio.file.Path
 import java.util.concurrent.TimeUnit
-import java.util.logging.Logger
 import javax.inject.Inject
 
 @Plugin(
-    id = "uptimekumapush", name = "UptimeKumaPush", version = "1.0.0",
+    id = "uptimekumapush", name = "UptimeKumaPush", version = "1.2.0",
     description = "A Plugin to Push Uptime-Data to Kuma", authors = ["Motzkiste"],
-    dependencies = [Dependency(id = "kotlinprovider")]
+    dependencies = [Dependency(id = "kotlinprovider"), Dependency(id = "eralogger")]
 )
 class UptimeKumaPushPlugin @Inject constructor(
     private val server: ProxyServer,
-    private val logger: Logger,
+    logger: Logger,
     @DataDirectory private val dataDirectory: Path
 ) {
     private var task: ScheduledTask? = null
+    private val logger: EraLogger = EraLogger.getInstance("UptimeKumaPush", logger)
 
     @Subscribe
     fun onProxyInitializeEvent(event: ProxyInitializeEvent) {
