@@ -50,5 +50,6 @@ class UptimeKumaPushPlugin @Inject constructor(
         task?.cancel()
 
         logger.info("UptimeKumaPushVelocity is disabled")
+        EraLogger.destroyInstance("UptimeKumaPush")
     }
 }

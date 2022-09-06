@@ -1,38 +1,38 @@
-package net.eratiem.uptimekumapush.spigot
+package net.eratiem.uptimekumapush.bungee
 
 import net.eratiem.eralogger.tools.EraLogger
 import net.eratiem.uptimekumapush.tools.ConfigManager
 import net.eratiem.uptimekumapush.tools.Tools
-import org.bukkit.plugin.java.JavaPlugin
-import org.bukkit.scheduler.BukkitTask
+import net.md_5.bungee.api.plugin.Plugin
+import net.md_5.bungee.api.scheduler.ScheduledTask
 import org.slf4j.Logger
+import java.util.concurrent.TimeUnit.SECONDS
 
-class UptimeKumaPushPlugin : JavaPlugin() {
-    private lateinit var task: BukkitTask
+class UptimeKumaPushPlugin : Plugin() {
+    private lateinit var task: ScheduledTask
     private lateinit var logger: EraLogger
 
     override fun onEnable() {
         try {
             ConfigManager(this.dataFolder)
-            logger = EraLogger.getInstance(name, getLogger() as Logger)
+            logger = EraLogger.getInstance("UptimeKumaPush", getLogger() as Logger)
         } catch (e: Exception) {
             logger.warning("Failed to load config! Please check your config.yml\n${e.stackTraceToString()}")
-            server.pluginManager.disablePlugin(this)
+            this.onDisable()
             return
         }
 
-        task = server.scheduler.runTaskTimerAsynchronously(
-            this, Tools.pushToKuma(logger), 0, 60L
+        task = proxy.scheduler.schedule(
+            this, Tools.pushToKuma(logger), 0, 60L, SECONDS
         )
 
         logger.info("UptimeKumaPush up and running!")
     }
 
     override fun onDisable() {
-        if (::task.isInitialized) {
+        if (::task.isInitialized)
             task.cancel()
-        }
         logger.info("UptimeKumaPush disabled")
-        EraLogger.destroyInstance(name)
+        EraLogger.destroyInstance("UptimeKumaPush")
     }
 }
